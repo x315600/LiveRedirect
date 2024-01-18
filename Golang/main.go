@@ -39,15 +39,15 @@ func getTestVideoUrl(c *gin.Context) {
 	str_time := time.Now().In(TimeLocation).Format("2006-01-02 15:04:05")
 	fmt.Fprintln(c.Writer, "#EXTM3U")
 	fmt.Fprintln(c.Writer, "#EXTINF:-1 tvg-name=\""+str_time+"\" tvg-logo=\"https://cdn.jsdelivr.net/gh/youshandefeiyang/IPTV/logo/tg.jpg\" group-title=\"列表更新时间\","+str_time)
-	fmt.Fprintln(c.Writer, "https://cdn.jsdelivr.net/gh/youshandefeiyang/testvideo/time/time.mp4")
-	fmt.Fprintln(c.Writer, "#EXTINF:-1 tvg-name=\"4K60PSDR-H264-AAC测试\" tvg-logo=\"https://cdn.jsdelivr.net/gh/youshandefeiyang/IPTV/logo/tg.jpg\" group-title=\"4K频道\",4K60PSDR-H264-AAC测试")
-	fmt.Fprintln(c.Writer, "http://159.75.85.63:5680/d/ad/h264/playad.m3u8")
-	fmt.Fprintln(c.Writer, "#EXTINF:-1 tvg-name=\"4K60PHLG-HEVC-EAC3测试\" tvg-logo=\"https://cdn.jsdelivr.net/gh/youshandefeiyang/IPTV/logo/tg.jpg\" group-title=\"4K频道\",4K60PHLG-HEVC-EAC3测试")
-	fmt.Fprintln(c.Writer, "http://159.75.85.63:5680/d/ad/playad.m3u8")
+	//fmt.Fprintln(c.Writer, "https://cdn.jsdelivr.net/gh/youshandefeiyang/testvideo/time/time.mp4")
+	//fmt.Fprintln(c.Writer, "#EXTINF:-1 tvg-name=\"4K60PSDR-H264-AAC测试\" tvg-logo=\"https://cdn.jsdelivr.net/gh/youshandefeiyang/IPTV/logo/tg.jpg\" group-title=\"4K频道\",4K60PSDR-H264-AAC测试")
+	//fmt.Fprintln(c.Writer, "http://159.75.85.63:5680/d/ad/h264/playad.m3u8")
+	//fmt.Fprintln(c.Writer, "#EXTINF:-1 tvg-name=\"4K60PHLG-HEVC-EAC3测试\" tvg-logo=\"https://cdn.jsdelivr.net/gh/youshandefeiyang/IPTV/logo/tg.jpg\" group-title=\"4K频道\",4K60PHLG-HEVC-EAC3测试")
+	//fmt.Fprintln(c.Writer, "http://159.75.85.63:5680/d/ad/playad.m3u8")
 }
 
 func getLivePrefix(c *gin.Context) string {
-	firstUrl := c.DefaultQuery("url", "https://www.goodiptv.club")
+	firstUrl := c.DefaultQuery("url", "https://tv.315600.xyz")
 	realUrl, _ := url.QueryUnescape(firstUrl)
 	return realUrl
 }
@@ -183,7 +183,7 @@ func setupRouter(adurl string) *gin.Engine {
 
 func main() {
 	key := []byte("6354127897263145")
-	defstr, _ := base64.StdEncoding.DecodeString("NGrrC9lxtd9O7ezMt3Ux2ekGkOyBoF9ipw9yqKFuItF/MwEBuKVN7GFoMAtaISCb/ouyeQUklFlqsCqGYOZwBx54INVxoDeMgQuEWQqETsCfL497FXvdiMOgS0buq74L")
+	defstr, _ := base64.StdEncoding.DecodeString("U/drYlFjurhhZTz7OVKVuYSoiui+yiu6aoJCS34b7F8=")
 	defurl, _ := openssl.AesECBDecrypt(defstr, key, openssl.PKCS7_PADDING)
 	r := setupRouter(string(defurl))
 	r.Run(":35455")
