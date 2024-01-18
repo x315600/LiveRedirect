@@ -11,8 +11,8 @@ on:
       - '**.go'
 
 env:
-  APP_NAME: allinonecs
-  DOCKERHUB_REPO: 315600/huya
+  APP_NAME: allinone
+  DOCKERHUB_REPO: 315600/allinone
 
 jobs:
   docker:
