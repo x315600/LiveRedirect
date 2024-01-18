@@ -65,4 +65,4 @@ if (array_key_exists('avp_info_res', $result)) {
 } else {
     header('location:' . $mediaurl);
     exit();
-}
+} 
