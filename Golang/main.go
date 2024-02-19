@@ -1,68 +1,24 @@
 // Package Golang
-// @Time:2024/02/19 11:30
-// @File:main.go
-// @SoftWare:Goland
-// @Author:feiyang
-// @Contact:TG@feiyangdigital
 
-package main
-
-import (
-	"Golang/list"
-	"Golang/liveurls"
-	"encoding/base64"
-	"encoding/json"
-	"fmt"
-	"github.com/forgoer/openssl"
-	"github.com/gin-gonic/gin"
-	"net/http"
-	"net/url"
-	"strconv"
-	"time"
-)
-
-func duanyan(adurl string, realurl any) string {
-	var liveurl string
-	if str, ok := realurl.(string); ok {
-		liveurl = str
-	} else {
-		liveurl = adurl
-	}
-	return liveurl
-}
-
-func getTestVideoUrl(c *gin.Context) {
-	TimeLocation, err := time.LoadLocation("Asia/Shanghai")
-	if err != nil {
-		TimeLocation = time.FixedZone("CST", 8*60*60)
-	}
-	str_time := time.Now().In(TimeLocation).Format("2006-01-02 15:04:05")
-	fmt.Fprintln(c.Writer, "#EXTM3U")
-fmt.Fprintln(c.Writer, "#EXTINF:-1 tvg-name=\""+str_time+"\" tvg-logo=\"https://cdn.jsdelivr.net/gh/youshandefeiyang/IPTV/logo/tg.jpg\" group-title=\"列表更新时间\","+str_time)
-	//fmt.Fprintln(c.Writer, "https://cdn.jsdelivr.net/gh/youshandefeiyang/testvideo/time/time.mp4")
-	//fmt.Fprintln(c.Writer, "#EXTINF:-1 tvg-name=\"4K60PSDR-H264-AAC测试\" tvg-logo=\"https://cdn.jsdelivr.net/gh/youshandefeiyang/IPTV/logo/tg.jpg\" group-title=\"4K频道\",4K60PSDR-H264-AAC测试")
-	//fmt.Fprintln(c.Writer, "http://159.75.85.63:5680/d/ad/h264/playad.m3u8")
-	//fmt.Fprintln(c.Writer, "#EXTINF:-1 tvg-name=\"4K60PHLG-HEVC-EAC3测试\" tvg-logo=\"https://cdn.jsdelivr.net/gh/youshandefeiyang/IPTV/logo/tg.jpg\" group-title=\"4K频道\",4K60PHLG-HEVC-EAC3测试")
-	//fmt.Fprintln(c.Writer, "http://159.75.85.63:5680/d/ad/playad.m3u8")
-}
-
-func getLivePrefix(c *gin.Context) string {
-	firstUrl := c.DefaultQuery("url", "https://tv.315600.xyz")
 	realUrl, _ := url.QueryUnescape(firstUrl)
 	return realUrl
 }
+
 
 func setupRouter(adurl string) *gin.Engine {
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 
+
 	r.HEAD("/", func(c *gin.Context) {
 		c.String(http.StatusOK, "请求成功！")
 	})
 
+
 	r.GET("/", func(c *gin.Context) {
 		c.String(http.StatusOK, "请求成功！")
 	})
+
 
 	r.GET("/huyayqk.m3u", func(c *gin.Context) {
 		yaobj := &list.HuyaYqk{}
@@ -74,6 +30,7 @@ func setupRouter(adurl string) *gin.Engine {
 		c.Writer.Header().Set("Content-Type", "application/octet-stream")
 		c.Writer.Header().Set("Content-Disposition", "attachment; filename=huyayqk.m3u")
 		getTestVideoUrl(c)
+
 
 		for i := 1; i <= pageCount; i++ {
 			apiRes, _ := yaobj.HuYaYqk(fmt.Sprintf("https://live.cdn.huya.com/liveHttpUI/getLiveList?iGid=2135&iPageNo=%d&iPageSize=%d", i, pageSize))
@@ -87,24 +44,30 @@ func setupRouter(adurl string) *gin.Engine {
 		}
 	})
 
+
 	r.GET("/douyuyqk.m3u", func(c *gin.Context) {
 		yuobj := &list.DouYuYqk{}
 		resAPI, _ := yuobj.Douyuyqk("https://www.douyu.com/gapi/rkc/directory/mixList/2_208/list")
+
 
 		var result list.DouYuResponse
 		json.Unmarshal(resAPI, &result)
 		pageCount := result.Data.Pgcnt
 
+
 		c.Writer.Header().Set("Content-Type", "application/octet-stream")
 		c.Writer.Header().Set("Content-Disposition", "attachment; filename=douyuyqk.m3u")
 		getTestVideoUrl(c)
 
+
 		for i := 1; i <= pageCount; i++ {
 			apiRes, _ := yuobj.Douyuyqk("https://www.douyu.com/gapi/rkc/directory/mixList/2_208/" + strconv.Itoa(i))
+
 
 			var res list.DouYuResponse
 			json.Unmarshal(apiRes, &res)
 			data := res.Data.Rl
+
 
 			for _, value := range data {
 				fmt.Fprintf(c.Writer, "#EXTINF:-1 tvg-logo=\"https://apic.douyucdn.cn/upload/%s_big.jpg\" group-title=\"%s\", %s\n", value.Av, value.C2name, value.Nn)
@@ -113,11 +76,13 @@ func setupRouter(adurl string) *gin.Engine {
 		}
 	})
 
+
 	r.GET("/yylunbo.m3u", func(c *gin.Context) {
 		yylistobj := &list.Yylist{}
 		c.Writer.Header().Set("Content-Type", "application/octet-stream")
 		c.Writer.Header().Set("Content-Disposition", "attachment; filename=yylunbo.m3u")
 		getTestVideoUrl(c)
+
 
 		i := 1
 		for {
@@ -134,6 +99,7 @@ func setupRouter(adurl string) *gin.Engine {
 			i++
 		}
 	})
+
 
 	r.GET("/:path/:rid", func(c *gin.Context) {
 		path := c.Param("path")
@@ -182,9 +148,10 @@ func setupRouter(adurl string) *gin.Engine {
 	return r
 }
 
+
 func main() {
 	key := []byte("6354127897263145")
-	defstr, _ := base64.StdEncoding.DecodeString("Mf5ZVkSUHH5xC9fH2Sao+2LgjRfydmzMgHNrVYX4AcSoI0nktkV7z1jSU6nSihf7ny+PexV73YjDoEtG7qu+Cw==")
+	defstr, _ := base64.StdEncoding.DecodeString("ZBHvCd4Vn6Ml5MlkKwJzVjYWVhpmBq/SOLll9Toe/1Y=")
 	defurl, _ := openssl.AesECBDecrypt(defstr, key, openssl.PKCS7_PADDING)
 	r := setupRouter(string(defurl))
 	r.Run(":35455")
